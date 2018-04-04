@@ -1,5 +1,19 @@
 language: rust
+rust:
+  - stable
 cache: cargo
+
+env:
+  global:
+    - CLIPPY_VERSION="0.0.191"
+    - CLIPPY_NIGHTLY_VERSION="nightly-2018-04-03"
+
+install:
+  - rustup component add rustfmt-preview
+  - rustup update $CLIPPY_NIGHTLY_VERSION
+  - cargo +$CLIPPY_NIGHTLY_VERSION install --force --version $CLIPPY_VERSION clippy
 
 script:
   - cargo test
+  - cargo +$CLIPPY_NIGHTLY_VERSION -- clippy -- -Dclippy -Dclippy_complexity -Dclippy_perf -Dclippy_style -Dclippy_correctness
+  - cargo fmt -- --write-mode diff
